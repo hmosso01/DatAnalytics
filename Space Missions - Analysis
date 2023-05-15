@@ -1,0 +1,161 @@
+# For this project, I downloaded a dataset from Kaggle that contains space mission records from 1957 through 2022
+# I uploaded it to DataGrip to perform the analysis using SQL (SQLite)
+# Afterwards, I uploaded my findings on Tableau to create visualizations and a dashboard.
+
+-- How many missions were there? [4630]
+
+  select
+     count(Missions)
+  from space_missions
+
+-- How many companies/Organizations? [62]
+
+  select
+     distinct(Company)
+  from space_missions
+
+-- What different types of rockets were used? [370]
+
+  select
+     distinct(Rocket)
+  from space_missions
+
+-- How many missions were successful? [4162]
+
+  select
+     count(MissionStatus) as total_success
+  from space_missions
+  where MissionStatus = 'Success'
+
+-- How many missions were unsuccessful? [357]
+
+  select
+     count(MissionStatus) as total_failure
+  from space_missions
+  where MissionStatus = 'Failure'
+
+-- Are there other options besides “Successful” and “Failure”? [Yes. Successful, Failure, Partial Failure and Pre Launch Failure]
+
+  select
+     distinct(MissionStatus)
+  from space_missions
+
+-- How many missions were Partial Failure? [107]
+
+  select
+    count(MissionStatus)
+  from space_missions
+  where MissionStatus = 'Partial Failure'
+
+-- How many Pre Launch Failures were there? [4] 
+
+  select
+    count(MissionStatus)
+  from space_missions
+  where MissionStatus = 'Prelaunch Failure'
+
+-- How many rockets are now retired as of 2022? [3620]
+
+  select
+     count(RocketStatus) as total_retired
+  from space_missions
+  where RocketStatus = 'Retired'
+
+-- How many rockets are still active as of 2022? [1010]
+
+  select
+     count(RocketStatus) as total_active
+  from space_missions
+  where RocketStatus = 'Active'
+
+-- Which year had the most trips? {I created a temporary table for this part}
+
+    --- Step 1: Filter the dataset and extract the year [Year, Mission]
+
+            select
+               distinct(strftime('%Y', Date)) as Year,
+               Mission
+            from space_missions
+
+    --- Step 2: [Distinct Year, Mission Count]
+
+            select
+               distinct(Year) as Year,
+               count(Year) as Mission_Count
+            from distinct_year1
+            group by year
+
+    --- Step 3: [2021 - 154]
+            select
+               Year,
+               max(Mission_Count)
+            from
+               MissionCount_Year
+    
+-- Which year had the least amount of trips? [1957 - 3 Trips]
+
+select
+   Year,
+   min(Mission_Count)
+from
+   MissionCount_Year
+
+-- Which year had the most successful trips? [2021 - 120 Successful trips]
+
+    select -- Main query to figure out the year with the most successful trips
+       Year,
+       max(Successful_count) as Most_Successful
+    from(select -- Subquery to filter the data to show distinct years and the amount of successful missions.
+        distinct(Year) as Year,
+       count(MissionStatus) as Successful_Count
+    from (select -- Subquery to extract the year and mission status
+           strftime('%Y', Date) as Year,
+           MissionStatus
+         from space_missions
+         where MissionStatus = 'Success'
+         group by Date) as success_rate
+    group by Year) as max_success
+
+-- Which year had the most failed trips? [1958 - 20 failed trips]
+
+    select -- Finally the year with the most failed trips
+       Year,
+       max(Failure_count) as Total_Failure
+    from(select -- Subquery to filter the data to show distinct years and the amount of failed missions.
+        distinct(Year) as Year,
+       count(MissionStatus) as Failure_Count
+    from (select -- Subquery to extract the year and mission status
+           strftime('%Y', Date) as Year,
+           MissionStatus
+         from space_missions
+         where MissionStatus = 'Failure'
+         group by Date) as failure_filtered
+    group by Year) as failure_total
+    
+-- Query to figure out the top 100 most used rockets
+
+  select -- Query to find out which rocket was most used
+     Rocket,
+     count(Rocket) as Num_of_trips
+  from space_missions
+  group by Rocket
+  order by Num_of_trips desc
+  limit 100
+
+-- Query to figure out the status of the rockets
+
+  select
+     RocketStatus as Rocket_Status,
+     count(RocketStatus) as Status_Count
+  from space_missions
+  where RocketStatus in ('Retired', 'Active')
+  group by RocketStatus
+
+-- Query to figure the count of missions each company has undertaken
+
+  select
+     distinct Company,
+     count(Mission) as Total_Trips
+  from space_missions
+  group by Company
+  order by Total_Trips desc
