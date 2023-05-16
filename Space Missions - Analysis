@@ -8,7 +8,7 @@
      count(Missions)
   from space_missions
 
--- How many companies/Organizations? [62]
+-- How many companies/organizations? [62]
 
   select
      distinct(Company)
