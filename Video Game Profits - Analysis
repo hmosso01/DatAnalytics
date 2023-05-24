@@ -62,10 +62,3 @@
           from vg_sales
           group by Year2
           order by Global_Sales desc
-
-
-
-
-
-
-
