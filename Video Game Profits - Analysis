@@ -1,0 +1,71 @@
+# This dataset contains sales data from more than 16,500 games (as of 2016)
+# I uploaded it to DataGrip to perform the analysis using SQL (SQLite)
+# Then, I created data visualizations using Tableau
+
+1. How many platforms are featured on the dataset?
+
+  -- Query to figure out the amount of platforms
+          select
+             distinct Platform
+          from vg_sales
+
+2. How many genres are there?
+
+  -- Query to figure out the amount of genres
+          select
+             distinct Genre
+          from vg_sales
+          
+3. How many publishers are there?
+
+  -- Query to figure out the amount of publishers
+          select
+             distinct Publisher
+          from vg_sales
+     
+4. Which year had the most/least released games?
+
+  -- Query to figure out which year released most games
+          select
+             distinct Year,
+             count(name) as Total_Released
+          from vg_sales
+          group by Year
+          order by Total_Released desc
+          
+5. Which platform generated the most/least profit?
+
+  -- Query to figure out which platform generated most profit
+          select
+             distinct Platform,
+             round(sum(Global_Sales), 2) as Global_Sales
+          from vg_sales
+          group by Platform
+          order by Global_Sales desc
+          
+6. Which genre made the most/least profit?
+
+  -- Query to figure out which genre generated most profit
+          select
+             distinct Genre,
+             round(sum(Global_Sales), 2) as Global_Sales
+          from vg_sales
+          group by Genre
+          order by Global_Sales desc
+          
+7. Which year was the most profitable?
+
+  -- Query to figure out which year generated most profit
+          select
+             distinct Year,
+             round(sum(Global_Sales), 2) as Global_Sales
+          from vg_sales
+          group by Year2
+          order by Global_Sales desc
+
+
+
+
+
+
+
