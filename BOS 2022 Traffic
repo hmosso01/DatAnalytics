@@ -1,5 +1,5 @@
 1. Query for domestic & international flights
-<pre>
+
 SELECT
    Flights,
    SUM(Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) as Total
@@ -12,9 +12,7 @@ WHERE
                'General Aviation (Flights)')
 GROUP BY Flights
 
-
 UNION
-
 
 SELECT
    Flights,
@@ -34,9 +32,8 @@ WHERE
                'Other International (Flights)')
 GROUP BY Flights
 
-
 ORDER BY Total DESC
-</pre>
+
 2. Query to figure out which month had the most/least international flights: [Most - August (4,512), Least - February (2,123)]
 
 SELECT
@@ -84,9 +81,9 @@ GROUP BY Flights
 
 4. Query to figure out the total number of domestic passengers. (29,527,910)
 
-Commuter - 3,257,220
-Jet - 26,253,068
-Charter - 17,622
+- Commuter - 3,257,220
+- Jet - 26,253,068
+- Charter - 17,622
 
 SELECT
    SUM(Total) as Total_Domestic
@@ -214,9 +211,7 @@ SELECT
 FROM "BOS Flights"
 GROUP BY Flights
 
-
 UNION ALL
-
 
 SELECT
    Passenger AS BOS,
@@ -224,18 +219,13 @@ SELECT
 FROM "BOS Passengers"
 GROUP BY Passenger
 
-
 UNION ALL
-
 
 SELECT
    "Cargo & Mail in libs" AS BOS,
    SUM(Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) AS year2022
 FROM "BOS Cargo"
 GROUP BY "Cargo & Mail in libs"
-
-
-
 
 ORDER BY BOS ASC
 
