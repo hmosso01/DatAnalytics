@@ -1,3 +1,8 @@
+Boston-Logan International Annual Airport Traffic - 2022
+   Source: https://www.massport.com/logan-airport/about-logan/airport-statistics/   
+   BOS PRASM: https://www.transtats.bts.gov/Data_Elements.aspx?Data=6 
+
+
 1. Query for domestic & international flights
 
 SELECT
