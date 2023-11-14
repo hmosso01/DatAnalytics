@@ -1,0 +1,253 @@
+1. Query for domestic & international flights
+
+SELECT
+   Flights,
+   SUM(Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) as Total
+FROM
+   "BOS Flights"
+WHERE
+   Flights IN ('Domestic Charter Flights',
+               'Domestic Commuter Flights',
+               'Domestic Jet Flights',
+               'General Aviation (Flights)')
+GROUP BY Flights
+
+
+UNION
+
+
+SELECT
+   Flights,
+   SUM(Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) as Total
+FROM
+   "BOS Flights"
+WHERE
+   Flights IN ('Bermuda/Bahamas/Caribbean (Flights)',
+               'Canada (Flights)',
+               'Central America (Flights)',
+               'Europe (Flights)',
+               'Middle East (Flights)',
+               'South America (Flights)',
+               'Trans-Pacific (Flights)',
+               'Australia (Flights)',
+               'North Africa (Flights)',
+               'Other International (Flights)')
+GROUP BY Flights
+
+
+ORDER BY Total DESC
+
+2. Query to figure out which month had the most/least international flights: [Most - August (4,512), Least - February (2,123)]
+
+SELECT
+  SUM(Jan) AS Jan,
+  SUM(Feb) AS Feb,
+  SUM(Mar) AS Mar,
+  SUM(Apr) AS Apr,
+  SUM(May) AS May,
+  SUM(Jun) AS Jun,
+  SUM(Jul) AS Jul,
+  SUM(Aug) AS Aug,
+  SUM(Sep) AS Sep,
+  SUM(Oct) AS Oct,
+  SUM(Nov) AS Nov,
+  SUM(Dec) AS Dec
+FROM(SELECT -- This query retrieves the monthly count only for international flights
+        Flights, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
+    FROM
+        "BOS Flights"
+    WHERE
+       Flights IN ('Bermuda/Bahamas/Caribbean',
+              'Canada',
+              'Central America',
+              'Europe',
+              'Middle East',
+              'South America',
+              'Trans-Pacific',
+              'Australia',
+              'North Africa',
+              'Other International')
+   GROUP BY Flights
+   ORDER BY Flights)
+
+3. Query to figure out the total inbound/outbound flights. (Inbound - 189,324, Outbound - 189,289)
+
+SELECT
+ Flights,
+ SUM(Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) as Total
+FROM
+ "BOS Flights"
+WHERE
+ Flights in ('Total Arriving (InBound) Flights',
+             'Total Departing (OutBound) Flights')
+GROUP BY Flights
+
+4. Query to figure out the total number of domestic passengers. (29,527,910)
+
+Commuter - 3,257,220
+Jet - 26,253,068
+Charter - 17,622
+
+SELECT
+   SUM(Total) as Total_Domestic
+FROM(SELECT
+  Passenger,
+  SUM(Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) AS Total
+FROM "BOS Passengers"
+WHERE Passenger in ('Domestic Charter Passenger',
+                   'Domestic Commuter Passenger',
+                   'Domestic Jet Passenger')
+GROUP BY Passenger
+ORDER BY Total DESC)
+
+5. Query to figure out the total number of international passengers - (6,450,000)
+
+SELECT
+   SUM(Total) AS Total
+FROM(SELECT
+   Passenger,
+   SUM(Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) AS Total
+FROM "BOS Passengers"
+WHERE
+   Passenger IN ('Bermuda/Bahamas/Caribbean',
+                 'Canada',
+                 'Central America',
+                 'Europe',
+                 'Middle East',
+                 'South America',
+                 'Trans-Pacific',
+                 'Australia',
+                 'North Africa',
+                 'Other International')
+GROUP BY Passenger
+ORDER BY Total DESC)
+
+6. Query to figure which region had the biggest influx of passengers - [Europe (3,537,177)]
+
+SELECT
+  Passenger,
+  max(Total) AS Total
+FROM(SELECT
+  Passenger,
+  SUM(Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) AS Total
+FROM "BOS Passengers"
+WHERE
+  Passenger IN ('Bermuda/Bahamas/Caribbean (Passengers)',
+                'Canada (Passengers)',
+                'Central America (Passengers)',
+                'Europe (Passengers)',
+                'Middle East (Passengers)',
+                'South America (Passengers)',
+                'Trans-Pacific (Passengers)',
+                'Australia (Passengers)',
+                'North Africa (Passengers)',
+                'Other International (Passengers)')
+GROUP BY Passenger
+ORDER BY Total DESC)
+
+7. How many of the passengers were general aviation? - (112,806)
+
+SELECT
+   Passenger,
+   SUM(Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) AS Total
+FROM "BOS Passengers"
+WHERE Passenger = 'General Aviation'
+
+ Query to figure out the total enplaning and deplaning passengers in 2022. 
+Enplaning - 17,997,405
+Deplaning - 18,093,221
+
+SELECT
+   Passenger,
+   SUM(Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) AS Total
+FROM "BOS Passengers"
+WHERE
+   Passenger IN (
+                 'Total Enplaning (OutBound) Passengers',
+                 'Total Deplaning (InBound) Passengers')
+GROUP BY Passenger
+ORDER BY Total DESC
+
+8. Query to figure out the total domestic mail - (394,703,666)
+
+SELECT
+   SUM(Total) as Total_Domestic
+FROM(SELECT
+       "Cargo & Mail in libs",
+       SUM(Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) AS Total
+   FROM "BOS Cargo"
+   WHERE
+        "Cargo & Mail in libs" in ('Mail (Domestic)','Express/Small (Domestic)')
+   GROUP BY "Cargo & Mail in libs"
+   ORDER BY Total DESC)
+
+9. Query to figure out the total international mail - (52,6945)
+
+SELECT
+   SUM(Total) as Total_International
+FROM(SELECT
+       "Cargo & Mail in libs",
+       SUM(Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) AS Total
+   FROM "BOS Cargo"
+   WHERE
+        "Cargo & Mail in libs" in ('Mail (International)','Express/Small (International)')
+   GROUP BY "Cargo & Mail in libs"
+   ORDER BY Total DESC)
+
+10. Query to figure out the total domestic/international freight cargo - International (236,347,404), Domestic (42,513,002)
+
+SELECT
+  "Cargo & Mail in libs",
+  SUM(Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) AS Total
+FROM "BOS Cargo"
+WHERE
+   "Cargo & Mail in libs" in ('Freight (Domestic)',
+                              'Freight (International)')
+GROUP BY "Cargo & Mail in libs"
+ORDER BY Total DESC
+
+Total flights, passengers & cargo
+
+SELECT
+   Flights AS BOS,
+   SUM(Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) AS year2022
+FROM "BOS Flights"
+GROUP BY Flights
+
+
+UNION ALL
+
+
+SELECT
+   Passenger AS BOS,
+   SUM(Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) AS year2022
+FROM "BOS Passengers"
+GROUP BY Passenger
+
+
+UNION ALL
+
+
+SELECT
+   "Cargo & Mail in libs" AS BOS,
+   SUM(Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) AS year2022
+FROM "BOS Cargo"
+GROUP BY "Cargo & Mail in libs"
+
+
+
+
+ORDER BY BOS ASC
+
+11. Query to figure out the total passenger revenue (PRASM) for the Fiscal Year 2022.
+
+SELECT
+   Year,
+   Month,
+   TOTAL
+FROM "BOS PRASM"
+WHERE
+   Month in ('1','2','3','4','5','6','7','8','9','10','11','12')
+AND
+   Year = '2022'
+
