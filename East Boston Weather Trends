@@ -32,9 +32,9 @@ VALUES ('2024-02-01','42', '38.5', '34'),
     ('2024-02-27','52', '41.7', '31'),
     ('2024-02-28','56', '52.7', '40'),
     ('2024-02-29','37', '31.8', '27')
---
 
--- Since the dataset contained over 700 rows I decided to compute the average minimum, mean and maximum temperatures
+-- Since the dataset contained over 700 rows I decided to compute the average of the minimum, mean and maximum temperatures
+
 SELECT -- Query to compute the average minimum, mean and max temperatures for year
   year,
   round(avg(min),2) as average_min,
